@@ -22,6 +22,7 @@ PossibleSDKs = {
   'episode1':  SDK('HL2SDK', '2.ep1', '1', 'EPISODEONE', WinLinux, 'episode1'),
   'css':  SDK('HL2SDKCSS', '2.css', '6', 'CSS', WinLinuxMac, 'css'),
   'csgo': SDK('HL2SDKCSGO', '2.csgo', '21', 'CSGO', WinLinuxMac, 'csgo'),
+  'tf2':  SDK('HL2SDKTF2', '2.tf2', '11', 'TF2', WinLinuxMac, 'tf2')
 }
 
 def ResolveEnvPath(env, folder):
