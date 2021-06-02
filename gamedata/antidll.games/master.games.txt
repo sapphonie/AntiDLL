@@ -12,4 +12,8 @@
 	{
 		"engine" "csgo"
 	}
+	"engine.tf2.txt"
+	{
+		"engine" "tf2"
+	}
 }
