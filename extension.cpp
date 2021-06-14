@@ -20,7 +20,7 @@ DETOUR_DECL_MEMBER1(ListenEvents, bool, CCLCMsg_ListenEvents*, msg)
 DETOUR_DECL_MEMBER1(ListenEvents, bool, CLC_ListenEvents*, msg)
 #endif
 {
-    auto client = (reinterpret_cast<CBaseClient*>(this))->GetPlayerSlot() + 1; 
+    auto client = ((IClient *)((intptr_t)this - 4))->GetPlayerSlot() + 1;
     IGamePlayer* pClient = playerhelpers->GetGamePlayer(client);
 
     if (pClient->IsFakeClient()) return DETOUR_MEMBER_CALL(ListenEvents)(msg);
