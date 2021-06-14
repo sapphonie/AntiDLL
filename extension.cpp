@@ -1,117 +1,62 @@
-#if SOURCE_ENGINE == SE_CSGO
-    #include <netmessages.pb.h>
-#endif
-
 #include "extension.h"
 #include "CDetour/detours.h"
 
 AntiDLL antiDLL;
 SMEXT_LINK(&antiDLL);
 
-CDetour* pDetour = nullptr;
-IGameConfig* pGameConfig = nullptr;
-IForward* forwardCheatDetected = nullptr;
-IGameEventManager2* gameevents = nullptr;
-std::vector<std::string> events;
+CDetour* pDetour                = nullptr;
+IGameConfig* pGameConfig        = nullptr;
+IForward* forwardCheatDetected  = nullptr;
+IGameEventManager2* gameevents  = nullptr;
+//std::vector<std::string> events;
 
-#if SOURCE_ENGINE == SE_CSGO
-DETOUR_DECL_MEMBER1(ListenEvents, bool, CCLCMsg_ListenEvents*, msg)
-#else
-DETOUR_DECL_MEMBER1(ListenEvents, bool, CLC_ListenEvents*, msg)
-#endif
+// bool CBaseClient::ProcessListenEvents( CLC_ListenEvents *msg )
+DETOUR_DECL_MEMBER1(ProcessListenEvents, bool, CLC_ListenEvents*, msg)
 {
-    auto client = ((IClient *)((intptr_t)this - 4))->GetPlayerSlot() + 1;
-    IGamePlayer* pClient = playerhelpers->GetGamePlayer(client);
-
-    if (pClient->IsFakeClient()) return DETOUR_MEMBER_CALL(ListenEvents)(msg);
-
-    auto detected = false;
-
-    #if SOURCE_ENGINE == SE_CSGO
-    IGameEventListener2* listener = reinterpret_cast<IGameEventListener2*>(this);
-
-    for (std::string iter : events)
+    IClient *pClient = (IClient *)((intptr_t)(this + 4));
+    smutils->LogError(myself, "pclient initd");
+    //
+    if (pClient == NULL)
     {
-        if (gameevents->FindListener(listener, iter.c_str()))
-        {
-            detected = true;
-            break;
-        }
+        return DETOUR_MEMBER_CALL(ProcessListenEvents)(msg);
     }
+    //
+    int client = pClient->GetPlayerSlot() + 1;
 
-    #else
+    if (pClient->IsFakeClient()) return DETOUR_MEMBER_CALL(ProcessListenEvents)(msg);
 
-    auto counter = 0;
+    smutils->LogError(myself, "client %i", client);
 
-    for (auto i = 0; i < MAX_EVENT_NUMBER; i++) {
+    int counter = 0;
+
+    for (int i = 0; i < MAX_EVENT_NUMBER; i++)
+    {
         if (msg->m_EventArray.Get(i))
         {
             counter++;
-            #if SOURCE_ENGINE == SE_CSS
-                if (counter > 47)
-                {
-                    detected = true;
-                }
-            #elif SOURCE_ENGINE == SE_TF2
-                {
-                    detected = false;
-                }
-            #else
-                if (counter > 25)
-                {
-                    detected = true;
-                }
-            #endif
         }
     }
-    smutils->LogError(myself, "%i events", counter);
-    #endif
+    smutils->LogMessage(myself, "%i events for cl %i", counter, client);
 
-    //smutils->Format("%i events", counter);
+    //if (detected)
+    //{
+    //    forwardCheatDetected->PushCell(client);
+    //    forwardCheatDetected->Execute();
+    //}
 
-    if (detected)
-    {
-        forwardCheatDetected->PushCell(client);
-        forwardCheatDetected->Execute();
-    }
-
-    return DETOUR_MEMBER_CALL(ListenEvents)(msg);
+    return DETOUR_MEMBER_CALL(ProcessListenEvents)(msg);
 }
 
 bool AntiDLL::SDK_OnLoad(char* error, size_t maxlen, bool late)
 {
-    if (!gameconfs->LoadGameConfigFile("antidll.games", &pGameConfig, error, maxlen))
+    if (!gameconfs->LoadGameConfigFile("listen", &pGameConfig, error, maxlen))
     {
         smutils->Format(error, maxlen - 1, "Failed to load gamedata");
         return false;
     }
 
-    char path[PLATFORM_MAX_PATH];
-    smutils->BuildPath(Path_SM, path, PLATFORM_MAX_PATH, "data/antidll/events_detection.txt");
-
-    if (!libsys->PathExists(path))
-    {
-        smutils->Format(error, maxlen - 1, "File %s not found", path);
-        return false;
-    }
-
-    std::string buffer;
-    std::ifstream file(path);
-
-    while (getline(file, buffer))
-    {
-        if (buffer[0] == ' ' || buffer[0] == '/')
-        {
-            continue;
-        }
-
-        events.push_back(buffer);
-    }
-
-    file.close();
-
     CDetourManager::Init(smutils->GetScriptingEngine(), pGameConfig);
-    pDetour = DETOUR_CREATE_MEMBER(ListenEvents, "Signature");
+    pDetour = DETOUR_CREATE_MEMBER(ProcessListenEvents, "CBaseClient::ProcessListenEvents");
 
     if (pDetour == nullptr)
     {
@@ -120,10 +65,6 @@ bool AntiDLL::SDK_OnLoad(char* error, size_t maxlen, bool late)
     }
 
     pDetour->EnableDetour();
-
-    forwardCheatDetected = forwards->CreateForward("AD_OnCheatDetected", ET_Event, 1, nullptr, Param_Cell);
-
-    sharesys->RegisterLibrary(myself, "antidll");
 
     return true;
 }
@@ -137,7 +78,9 @@ void AntiDLL::SDK_OnUnload()
 
 bool AntiDLL::SDK_OnMetamodLoad(ISmmAPI *ismm, char *error, size_t maxlen, bool late)
 {
+    GET_V_IFACE_CURRENT(GetEngineFactory, engine, IVEngineServer, INTERFACEVERSION_VENGINESERVER);
     GET_V_IFACE_CURRENT(GetEngineFactory, gameevents, IGameEventManager2, INTERFACEVERSION_GAMEEVENTSMANAGER2);
+    //GET_V_IFACE_CURRENT(GetEngineFactory, helpers, IServerPluginHelpers, INTERFACEVERSION_ISERVERPLUGINHELPERS);
 
     return true;
 }

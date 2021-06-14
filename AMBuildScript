@@ -19,10 +19,7 @@ WinLinux = ['windows', 'linux']
 WinLinuxMac = ['windows', 'linux', 'mac']
 
 PossibleSDKs = {
-  'episode1':  SDK('HL2SDK', '2.ep1', '1', 'EPISODEONE', WinLinux, 'episode1'),
-  'css':  SDK('HL2SDKCSS', '2.css', '6', 'CSS', WinLinuxMac, 'css'),
-  'csgo': SDK('HL2SDKCSGO', '2.csgo', '21', 'CSGO', WinLinuxMac, 'csgo'),
-  'tf2':  SDK('HL2SDKTF2', '2.tf2', '11', 'TF2', WinLinuxMac, 'tf2')
+  'tf2':  SDK('HL2SDKTF2', '2.tf2', '1', 'TF2', WinLinuxMac, 'tf2')
 }
 
 def ResolveEnvPath(env, folder):
@@ -158,9 +155,6 @@ class ExtensionConfig(object):
       '-msse',
       '-m32',
       '-fvisibility=hidden',
-      '-Wunknown-warning-option',
-      '-Wno-implicit-int-float-conversion',
-      '-Wno-unknown-warning-option',
     ]
     cxx.cxxflags += [
       '-std=c++14',

@@ -48,12 +48,10 @@
 
 class CLC_ListenEvents
 {
+    char nop[16];
 public:
-	char nop[16]; 
-	CBitVec<MAX_EVENT_NUMBER> m_EventArray;
+    CBitVec<MAX_EVENT_NUMBER> m_EventArray;
 };
-
-class CBaseClient : public IGameEventListener2, public IClient {};
 
 /**
  * @brief Sample implementation of the SDK Extension.
