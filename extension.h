@@ -9,12 +9,16 @@
 #include "smsdk_ext.h"
 
 #include <igameevents.h>
+#include <inetmsghandler.h>
+#include <inetmessage.h>
+
 #include <iclient.h>
 #include <bitvec.h>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <eventlist.h>
+
 // get listen events class for use in our ProcessListenEvents func
 class CLC_ListenEvents
 {
@@ -23,7 +27,6 @@ class CLC_ListenEvents
 public:
     CBitVec<MAX_EVENT_NUMBER> m_EventArray;
 };
-
 
 /**
  * @brief Sample implementation of the SDK Extension.
