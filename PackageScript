@@ -3,17 +3,14 @@ import os
 
 # This is where the files will be output to
 # package is the default
-builder.SetBuildFolder('package')
+builder.SetBuildFolder('adlltf2')
 
 # Add any folders you need to this list
 folder_list = [
   'addons/sourcemod/extensions',
   'addons/sourcemod/scripting',
   'addons/sourcemod/scripting/include',
-  'addons/sourcemod/gamedata/antidll.games',
-  'addons/sourcemod/translations',
-  'addons/sourcemod/data/antidll',
-  'addons/sourcemod/configs/antidll',
+  'addons/sourcemod/gamedata/',
 ]
 
 # Create the distribution folder hierarchy.
@@ -31,40 +28,14 @@ def CopyFiles(src, dest, files):
     source_path = os.path.join(builder.sourcePath, src, source_file)
     builder.AddCopy(source_path, dest_entry)
 
-# Include files 
+# Include files
 CopyFiles('scripting/include', 'addons/sourcemod/scripting/include',
-  [ 'antidll.inc', 
-    'materialadmin.inc',
-    'sourcebanspp.inc']
-)
-
-CopyFiles('scripting', 'addons/sourcemod/scripting',
-  [ 'AntiDLL.sp', ]
+  [ 'adlltf2.inc' ]
 )
 
 # GameData files
-CopyFiles('gamedata/antidll.games', 'addons/sourcemod/gamedata/antidll.games',
-  [ 'master.games.txt',
-    'engine.csgo.txt',
-  'engine.css.txt',
-  'engine.ep1.txt',
-  ]
-)
-
-CopyFiles('translations', 'addons/sourcemod/translations',
-  [ 'antidll.phrases.txt',
-  ]
-)
-
-CopyFiles('data/antidll', 'addons/sourcemod/data/antidll',
-  [ 'events_detection.txt',
-  ]
-)
-
-CopyFiles('configs/antidll', 'addons/sourcemod/configs/antidll',
-  [ 'settings.ini',
-  'whitelist.ini',
-  ]
+CopyFiles('gamedata/', 'addons/sourcemod/gamedata/',
+  [ 'adlltf2.txt' ]
 )
 
 # Copy binaries.

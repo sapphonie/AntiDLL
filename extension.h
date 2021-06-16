@@ -1,40 +1,9 @@
-/**
- * vim: set ts=4 :
- * =============================================================================
- * SourceMod Sample Extension
- * Copyright (C) 2004-2008 AlliedModders LLC.  All rights reserved.
- * =============================================================================
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 3.0, as published by the
- * Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * As a special exception, AlliedModders LLC gives you permission to link the
- * code of this program (as well as its derivative works) to "Half-Life 2," the
- * "Source Engine," the "SourcePawn JIT," and any Game MODs that run on software
- * by the Valve Corporation.  You must obey the GNU General Public License in
- * all respects for all other code used.  Additionally, AlliedModders LLC grants
- * this exception to all derivative works.  AlliedModders LLC defines further
- * exceptions, found in LICENSE.txt (as of this writing, version JULY-31-2007),
- * or <http://www.sourcemod.net/license.php>.
- *
- * Version: $Id$
- */
-
 #ifndef _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
 #define _INCLUDE_SOURCEMOD_EXTENSION_PROPER_H_
 
 /**
  * @file extension.h
- * @brief Sample extension code header.
+ * @brief adlltf2 code header
  */
 
 #include "smsdk_ext.h"
@@ -45,19 +14,22 @@
 #include <vector>
 #include <string>
 #include <fstream>
-
+#include <eventlist.h>
+// get listen events class for use in our ProcessListenEvents func
 class CLC_ListenEvents
 {
     char nop[16];
+// we only care about the eventarray so we noop the rest of the vars
 public:
     CBitVec<MAX_EVENT_NUMBER> m_EventArray;
 };
+
 
 /**
  * @brief Sample implementation of the SDK Extension.
  * Note: Uncomment one of the pre-defined virtual functions in order to use it.
  */
-class AntiDLL : public SDKExtension
+class adlltf2 : public SDKExtension
 {
 public:
 	/**
